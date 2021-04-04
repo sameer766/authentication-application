@@ -6,6 +6,7 @@ import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import com.amazonaws.services.simpleemail.model.*;
 import com.sameer.authenticationapplication.shared.UserDto;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,6 +24,10 @@ public class SmsService {
   private String PASSWORD_RESET_TEXT_BODY;
   private String PASSWORD_RESET_HTML_BODY;
   private String HTML_BODY;
+  @Value("${aws.accessKeyId}")
+  private String accessKey;
+  @Value("${aws.secretKey}")
+  private String awsSecretKey;
 
 
   private void intitializeLocalValue() {
@@ -106,8 +111,8 @@ public class SmsService {
   public void verifyEmail(UserDto userDto) {
    //intitializeLocalValue();
     intitializeAWSValue();
-    System.setProperty("aws.accessKeyId", "AKIAYDSA5CSIJTCXKCKX");
-    System.setProperty("aws.secretKey", "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");
+    System.setProperty("aws.accessKeyId", accessKey);
+    System.setProperty("aws.secretKey", awsSecretKey);
     AmazonSimpleEmailService amazonSimpleEmailService = AmazonSimpleEmailServiceClientBuilder.standard()
         .withRegion(Regions.US_EAST_1).build();
     String htmlBodyToken = HTML_BODY.replace("$tokenValue", userDto.getEmailVerificationToken());
@@ -134,8 +139,8 @@ public class SmsService {
   public boolean sendPasswordResetRequest(String firstName, String email, String token) {
 
     boolean returnVal = false;
-    System.setProperty("aws.accessKeyId", "AKIAYDSA5CSIJTCXKCKX");
-    System.setProperty("aws.secretKey", "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");
+    System.setProperty("aws.accessKeyId",accessKey);
+    System.setProperty("aws.secretKey", awsSecretKey);
     AmazonSimpleEmailService amazonSimpleEmailService = AmazonSimpleEmailServiceClientBuilder.standard()
         .withRegion(Regions.US_EAST_1).build();
     String htmlBodyToken = PASSWORD_RESET_HTML_BODY.replace("firstName", firstName)
